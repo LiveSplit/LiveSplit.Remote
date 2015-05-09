@@ -43,6 +43,11 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WebFiles.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>WebFiles.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\LiveSplit.Core\LiveSplit.Core.csproj">
@@ -55,6 +60,23 @@
       <Name>UpdateManager</Name>
       <Private>False</Private>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="websplit\css\timer.css" />
+    <Content Include="websplit\index.html" />
+    <Content Include="websplit\js\fastclick-min.js" />
+    <Content Include="websplit\js\FileSaver.min.js" />
+    <Content Include="websplit\js\slideout.min.js" />
+    <Content Include="websplit\js\timer.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="websplit\README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="WebFiles.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>WebFiles.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
