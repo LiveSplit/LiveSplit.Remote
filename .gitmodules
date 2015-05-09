@@ -1,0 +1,3 @@
+[submodule "websplit"]
+	path = websplit
+	url = https://github.com/iotku/websplit.git
