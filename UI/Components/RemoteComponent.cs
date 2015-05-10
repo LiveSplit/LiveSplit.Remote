@@ -13,7 +13,7 @@ namespace LiveSplit.UI.Components
     public class RemoteComponent : LogicComponent
     {
         protected HttpListener HttpListener { get; set; }
-        protected IDictionary<string, string> HostedFiles { get; set; }
+        protected IDictionary<string, byte[]> HostedFiles { get; set; }
 
         public override string ComponentName
         {
@@ -28,15 +28,22 @@ namespace LiveSplit.UI.Components
 
         private void SetUpHostedFiles()
         {
-            HostedFiles = new Dictionary<string, string>();
+            HostedFiles = new Dictionary<string, byte[]>();
 
-            HostedFiles.Add("/", WebFiles.index_html);
-            HostedFiles.Add("/index.html", WebFiles.index_html);
-            HostedFiles.Add("/js/timer.js", WebFiles.timer_js);
-            HostedFiles.Add("/js/fastclick-min.js", WebFiles.fastclick_min_js);
-            HostedFiles.Add("/js/FileSaver.min.js", WebFiles.FileSaver_min_js);
-            HostedFiles.Add("/js/slideout.min.js", WebFiles.slideout_min_js);
-            HostedFiles.Add("/css/timer.css", WebFiles.timer_css);
+            HostedFiles.Add("/", Encoding.UTF8.GetBytes(WebFiles.index_html));
+            HostedFiles.Add("/index.html", Encoding.UTF8.GetBytes(WebFiles.index_html));
+            HostedFiles.Add("/js/timer.js", Encoding.UTF8.GetBytes(WebFiles.timer_js));
+            HostedFiles.Add("/js/fastclick-min.js", Encoding.UTF8.GetBytes(WebFiles.fastclick_min_js));
+            HostedFiles.Add("/js/FileSaver.min.js", Encoding.UTF8.GetBytes(WebFiles.FileSaver_min_js));
+            HostedFiles.Add("/js/slideout.min.js", Encoding.UTF8.GetBytes(WebFiles.slideout_min_js));
+            HostedFiles.Add("/css/timer.css", Encoding.UTF8.GetBytes(WebFiles.timer_css));
+
+
+            using (var memoryStream = new MemoryStream())
+            {
+                WebFiles.Icon.Save(memoryStream);
+                HostedFiles.Add("/favicon.ico", memoryStream.GetBuffer());
+            }
         }
 
         private void SetUpHttpListener()
@@ -49,13 +56,17 @@ namespace LiveSplit.UI.Components
 
         private string ResolveTontentType(string url)
         {
-            if (url.StartsWith("/js/"))
+            if (url.EndsWith(".js"))
             {
                 return "application/javascript";
             }
-            else if (url.StartsWith("/css/"))
+            else if (url.EndsWith(".css"))
             {
                 return "text/css";
+            }
+            else if (url.EndsWith(".ico"))
+            {
+                return "image/x-icon";
             }
             else
             {
@@ -71,7 +82,7 @@ namespace LiveSplit.UI.Components
 
                 var url = context.Request.RawUrl;
 
-                string response = null;
+                byte[] response = null;
 
                 if (HostedFiles.ContainsKey(url))
                 {
@@ -79,18 +90,16 @@ namespace LiveSplit.UI.Components
                 }
                 else
                 {
-                    response = "404";
+                    response = Encoding.UTF8.GetBytes("404");
                 }
 
                 var contentType = ResolveTontentType(url);
 
                 context.Response.ContentType = contentType;
 
-                var stream = context.Response.OutputStream;
-
-                using (var writer = new StreamWriter(stream))
+                using (var stream = context.Response.OutputStream)
                 {
-                    writer.Write(response);
+                    stream.Write(response, 0, response.Length);
                 }
 
                 HttpListener.BeginGetContext(GotContext, null);

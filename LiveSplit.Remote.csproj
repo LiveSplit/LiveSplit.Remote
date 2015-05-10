@@ -63,6 +63,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Icon.ico" />
     <Content Include="websplit\css\timer.css" />
     <Content Include="websplit\index.html" />
     <Content Include="websplit\js\fastclick-min.js" />
