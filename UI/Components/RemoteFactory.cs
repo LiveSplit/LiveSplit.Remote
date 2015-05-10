@@ -1,8 +1,11 @@
 ﻿using LiveSplit.Model;
+using LiveSplit.UI.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
+[assembly:ComponentFactory(typeof(RemoteFactory))]
 
 namespace LiveSplit.UI.Components
 {
@@ -25,7 +28,7 @@ namespace LiveSplit.UI.Components
 
         public IComponent Create(LiveSplitState state)
         {
-            return new RemoteComponent();
+            return new RemoteComponent(state);
         }
 
         public string UpdateName
