@@ -79,7 +79,6 @@ namespace LiveSplit.UI.Components
             if (result.IsCompleted && HttpListener != null)
             {
                 var context = HttpListener.EndGetContext(result);
-
                 var url = context.Request.RawUrl;
 
                 byte[] response = null;
@@ -94,7 +93,6 @@ namespace LiveSplit.UI.Components
                 }
 
                 var contentType = ResolveTontentType(url);
-
                 context.Response.ContentType = contentType;
 
                 using (var stream = context.Response.OutputStream)
