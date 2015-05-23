@@ -99,7 +99,7 @@ namespace LiveSplit {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die &lt;!DOCTYPE html&gt;
-        ///&lt;html&gt;
+        ///&lt;html manifest=&quot;webstorage.manifest&quot;&gt;
         ///&lt;head&gt;
         ///	&lt;title&gt;RTA Timer&lt;/title&gt;
         ///	&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;/&gt;
@@ -108,7 +108,7 @@ namespace LiveSplit {
         ///	&lt;meta name=&quot;apple-mobile-web-app-capable&quot; content=&quot;yes&quot; /&gt;
         ///	&lt;meta name=&quot;apple-mobile-web-app-title&quot; content=&quot;WebSplit&quot; /&gt;
         ///	&lt;meta name=&quot;apple-mobile-web-app-status-bar-style&quot; content=&quot;black&quot; /&gt;
-        ///	&lt;meta name=&quot;format-detection&quot; content=&quot;telephone=n [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///	&lt;meta name=&quot;format- [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         internal static string index_html {
             get {
@@ -178,6 +178,23 @@ namespace LiveSplit {
         internal static string timer_js {
             get {
                 return ResourceManager.GetString("timer_js", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die CACHE MANIFEST
+        ///
+        ///CACHE:
+        ///index.html
+        ///js/FileSaver.min.js
+        ///js/fastclick-min.js
+        ///js/slideout.min.js
+        ///js/timer.js
+        ///css/timer.css ähnelt.
+        /// </summary>
+        internal static string webstorage_manifest {
+            get {
+                return ResourceManager.GetString("webstorage_manifest", resourceCulture);
             }
         }
     }

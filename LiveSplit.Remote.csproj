@@ -70,6 +70,7 @@
     <Content Include="websplit\js\FileSaver.min.js" />
     <Content Include="websplit\js\slideout.min.js" />
     <Content Include="websplit\js\timer.js" />
+    <None Include="websplit\webstorage.manifest" />
   </ItemGroup>
   <ItemGroup>
     <None Include="websplit\README.md" />

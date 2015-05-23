@@ -32,6 +32,7 @@ namespace LiveSplit.UI.Components
 
             HostedFiles.Add("/", Encoding.UTF8.GetBytes(WebFiles.index_html));
             HostedFiles.Add("/index.html", Encoding.UTF8.GetBytes(WebFiles.index_html));
+            HostedFiles.Add("/webstorage.manifest", Encoding.UTF8.GetBytes(WebFiles.webstorage_manifest));
             HostedFiles.Add("/js/timer.js", Encoding.UTF8.GetBytes(WebFiles.timer_js));
             HostedFiles.Add("/js/fastclick-min.js", Encoding.UTF8.GetBytes(WebFiles.fastclick_min_js));
             HostedFiles.Add("/js/FileSaver.min.js", Encoding.UTF8.GetBytes(WebFiles.FileSaver_min_js));
@@ -67,6 +68,10 @@ namespace LiveSplit.UI.Components
             else if (url.EndsWith(".ico"))
             {
                 return "image/x-icon";
+            }
+            else if (url.EndsWith(".manifest"))
+            {
+                return "text/cache-manifest";
             }
             else
             {
