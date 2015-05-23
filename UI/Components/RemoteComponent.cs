@@ -1,4 +1,6 @@
 ﻿using LiveSplit.Model;
+using LiveSplit.Model.Input;
+using LiveSplit.TimeFormatters;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,12 +9,15 @@ using System.Net;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using WebSocketSharp;
+using WebSocketSharp.Server;
 
 namespace LiveSplit.UI.Components
 {
     public class RemoteComponent : LogicComponent
     {
         protected HttpListener HttpListener { get; set; }
+        protected WebSocketServer WebSocketServer { get; set; }
         protected IDictionary<string, byte[]> HostedFiles { get; set; }
 
         public override string ComponentName
@@ -23,6 +28,7 @@ namespace LiveSplit.UI.Components
         public RemoteComponent(LiveSplitState state)
         {
             SetUpHttpListener();
+            SetUpWebSocketServer(state);
             SetUpHostedFiles();
         }
 
@@ -53,6 +59,13 @@ namespace LiveSplit.UI.Components
             HttpListener.Prefixes.Add("http://localhost:58321/");
             HttpListener.Start();
             HttpListener.BeginGetContext(GotContext, null);
+        }
+
+        private void SetUpWebSocketServer(LiveSplitState state)
+        {
+            WebSocketServer = new WebSocketServer(58322);
+            WebSocketServer.AddWebSocketService<Behavior>("/websocket", () => new Behavior(state));
+            WebSocketServer.Start();
         }
 
         private string ResolveTontentType(string url)
@@ -129,8 +142,80 @@ namespace LiveSplit.UI.Components
 
         public override void Dispose()
         {
-            HttpListener.Close();
-            HttpListener = null;
+            if (HttpListener != null)
+            {
+                HttpListener.Close();
+                HttpListener = null;
+            }
+            if (WebSocketServer != null)
+            {
+                WebSocketServer.Stop();
+                WebSocketServer = null;
+            }
+            //TODO Dispose Behavior?
+        }
+
+        public class Behavior : WebSocketBehavior, IDisposable
+        {
+            private LiveSplitState state;
+
+            public Behavior(LiveSplitState state)
+            {
+                this.state = state;
+                state.OnPause += state_OnPause;
+                state.OnReset += state_OnReset;
+                state.OnResume += state_OnResume;
+                state.OnSkipSplit += state_OnSkipSplit;
+                state.OnSplit += state_OnSplit;
+                state.OnStart += state_OnStart;
+                state.OnUndoSplit += state_OnUndoSplit;
+            }
+
+            void state_OnUndoSplit(object sender, EventArgs e)
+            {
+                Send("undosplit");
+            }
+
+            void state_OnStart(object sender, EventArgs e)
+            {
+                Send("start");
+            }
+
+            void state_OnSplit(object sender, EventArgs e)
+            {
+                Send("split");
+            }
+
+            void state_OnSkipSplit(object sender, EventArgs e)
+            {
+                Send("skipsplit");
+            }
+
+            void state_OnResume(object sender, EventArgs e)
+            {
+                Send("resume");
+            }
+
+            void state_OnReset(object sender, TimerPhase value)
+            {
+                Send("reset");
+            }
+
+            void state_OnPause(object sender, EventArgs e)
+            {
+                Send("paused");
+            }
+
+            protected override void OnMessage(MessageEventArgs e)
+            {
+                var timeFormatter = new ShortTimeFormatter();
+                Send(timeFormatter.Format(state.CurrentTime.RealTime));
+            }
+
+            public void Dispose()
+            {
+                //TODO Remove events
+            }
         }
     }
 }
